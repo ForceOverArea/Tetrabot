@@ -1,7 +1,6 @@
 import asyncio, discord, random
 from tetris import *
 from discord.ext import commands, tasks
-from discord.utils import get
 
 # set prefix
 bot = commands.Bot(command_prefix= "T!")
