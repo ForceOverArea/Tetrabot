@@ -1,9 +1,12 @@
 # tetrabot-code
-Plays laggy tetris in discord text chat.
+Plays laggy Tetris in Discord text chat.
 
-This repository is ready to deploy to heroku aside from missing a discord bot key in 'token.txt'
+To invite my instance of this bot to your server:
+https://discord.com/oauth2/authorize?client_id=735948673212481736&scope=bot&permissions=1073753104
 
-# To deploy to heroku: (start your own instance)
+This repository is ready to deploy to Heroku aside from missing a discord bot key.
+
+# To deploy to Heroku: (start your own instance)
 1. Clone this repo to a PRIVATE repo
 2. Create a Discord bot account via the Discord dev portal
 3. Copy and paste the bot token to 'token.txt' in YOUR repo
