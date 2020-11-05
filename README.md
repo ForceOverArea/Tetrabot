@@ -1,4 +1,4 @@
-# tetrabot-code
+# tetrabot
 Plays laggy Tetris in Discord text chat.
 
 To invite my instance of this bot to your server:
