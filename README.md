@@ -1,5 +1,5 @@
-# tetrabot
-Plays laggy Tetris in Discord text chat.
+# Tetrabot
+Plays a laggy game of Tetris in Discord text chat.
 
 To invite my instance of this bot to your server:
 https://discord.com/oauth2/authorize?client_id=735948673212481736&scope=bot&permissions=1073753104
