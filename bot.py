@@ -104,7 +104,7 @@ async def help(ctx):
             title="Tetra - Tetris in Discord by ForceOverArea!",
             description=helpMessage,
             color=discord.Colour.purple()
-        ).set_thumbnail(url="https://avatars1.githubusercontent.com/u/70045551?s=460&u=0f8845c56ebdfb1f24e1c43d8f4db7259b8824e5&v=4")
+        ).set_thumbnail(url="https://images-ext-2.discordapp.net/external/B33KFohXke3CeSvXuwmASnPfEXXcfZ2RbRjxDA4-uGY/%3Fsize%3D1024/https/cdn.discordapp.com/avatars/735948673212481736/0b928278f98491a1b7e16a762c9a4612.webp?width=708&height=708")
     )   
 
 
