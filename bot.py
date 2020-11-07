@@ -3,7 +3,7 @@ from tetris import *
 from discord.ext import commands, tasks
 
 # set prefix
-bot = commands.Bot(command_prefix= "T!")
+bot = commands.commands.AutoShardedBot(command_prefix= "T!")
 games = {
 #   str(user.id):game_obj
 }
@@ -111,6 +111,7 @@ async def help(ctx):
 @bot.command()
 async def play(ctx):
     """Starts a game of Tetris in text chat."""
+    assert(ctx.guild)
     global games
     if str(ctx.author.id) in games:
         print("Removing leftover game data...")
