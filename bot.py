@@ -70,8 +70,44 @@ async def clock():
                 return
         else: # executes when no game exists in RAM
             pass
-        
-        
+
+
+bot.remove_command("help")
+@bot.command(aliases=["info"])
+async def help(ctx):
+    helpMessage = """
+    ====================================
+    **:video_game: How to Play:**
+    The game is controlled via 5 different reaction 'buttons':
+    :point_left:/:point_right: - Move the piece left/right
+    :left_fist:/:right_fist: - Rotate the piece counter-clockwise/clockwise
+    :point_down: - Drop the piece to the bottom of the board instantly
+    
+    **:space_invader: Scoring:**
+    Fill lines from left to right to clear them!
+        1 line clear ---------- 10 points
+        2 line clear ---------- 100 points
+        3 line clear ---------- 1000 points
+        4 line clear (Tetris) - 10000 points
+    
+    **:arrow_forward: To Start a Game:**
+    Just type "T!play" in chat and the bot will let you know that the game is starting. The game ends automatically when you lose. (i.e. when the top of the board is blocked)
+    
+    **:link: Links:**
+    Invite me to another server here: https://www.shorturl.at/hzMPS
+    Star me on GitHub! https://github.com/ForceOverArea/Tetrabot
+    """
+
+
+    await ctx.send(
+        embed = discord.Embed(
+            title="Tetra - Tetris in Discord by ForceOverArea!",
+            description=helpMessage,
+            color=discord.Colour.purple()
+        ).set_thumbnail(url="https://avatars1.githubusercontent.com/u/70045551?s=460&u=0f8845c56ebdfb1f24e1c43d8f4db7259b8824e5&v=4")
+    )   
+
+
 @bot.command()
 async def play(ctx):
     """Starts a game of Tetris in text chat."""
@@ -116,11 +152,6 @@ async def play(ctx):
     for emoji in ["\U0001F91B","\U0001F448","\U0001F449","\U0001F91C","\U0001F447"]:
         await thisGame.instance.add_reaction(emoji)
         
-        
-@bot.command()
-async def inv(ctx):
-    await ctx.send("Invite me to another server at: https://discord.com/oauth2/authorize?client_id=735948673212481736&scope=bot&permissions=1073753104")
-    
     
 @bot.event
 async def on_reaction_add(reaction, user):
