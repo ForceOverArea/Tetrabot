@@ -76,7 +76,6 @@ bot.remove_command("help")
 @bot.command(aliases=["info"])
 async def help(ctx):
     helpMessage = """
-    ====================================
     **:video_game: How to Play:**
     The game is controlled via 5 different reaction 'buttons':
     :point_left:/:point_right: - Move the piece left/right
@@ -101,11 +100,14 @@ async def help(ctx):
 
     await ctx.send(
         embed = discord.Embed(
-            title="Tetra - Tetris in Discord by ForceOverArea!",
+            title="Tetra - Tetris in Discord",
             description=helpMessage,
             color=discord.Colour.purple()
-        ).set_thumbnail(url="https://images-ext-2.discordapp.net/external/B33KFohXke3CeSvXuwmASnPfEXXcfZ2RbRjxDA4-uGY/%3Fsize%3D1024/https/cdn.discordapp.com/avatars/735948673212481736/0b928278f98491a1b7e16a762c9a4612.webp?width=708&height=708")
-    )   
+        ).set_footer(
+            text="Created by ForceOverArea",
+            icon_url="https://avatars1.githubusercontent.com/u/70045551?s=460&u=0f8845c56ebdfb1f24e1c43d8f4db7259b8824e5&v=4"
+        )
+    )  
 
 
 @bot.command()
