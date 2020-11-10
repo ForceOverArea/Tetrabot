@@ -1,7 +1,7 @@
 # Tetrabot
 Plays a laggy game of Tetris in Discord text chat.
 
-To invite my instance of this bot to your server: (I would prefer that you do this over starting your own)\n
+To invite my instance of this bot to your server: (I would prefer that you do this over starting your own)
 https://discord.com/oauth2/authorize?client_id=735948673212481736&scope=bot&permissions=1073753104
 
 This repository is ready to deploy to Heroku aside from missing a Discord bot key.
