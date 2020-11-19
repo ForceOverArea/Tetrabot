@@ -95,6 +95,7 @@ async def help(ctx):
     **:link: Links:**
     Invite me to another server here: {PASTE YOUR BOT'S INVITE LINK HERE}
     Star me on GitHub! https://github.com/ForceOverArea/Tetrabot
+    Vote for me on the Discord bot store! https://top.gg/bot/735948673212481736
     """
 
 
