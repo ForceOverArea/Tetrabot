@@ -3,7 +3,7 @@ from tetris import *
 from discord.ext import commands, tasks
 
 # set prefix
-bot = commands.commands.AutoShardedBot(command_prefix= "T!")
+bot = commands.AutoShardedBot(command_prefix= "T!")
 games = {
 #   str(user.id):game_obj
 }
@@ -71,6 +71,25 @@ async def clock():
         else: # executes when no game exists in RAM
             pass
 
+        
+@bot.command()
+@commands.check(commands.is_owner())
+async def _server_count(ctx):
+    await ctx.message.delete()
+    await ctx.author.send(
+        content=len(bot.guilds), 
+        delete_after=20
+    )
+    
+@bot.command()
+@commands.check(commands.is_owner())
+async def _view_games(ctx):
+    await ctx.message.delete()
+    await ctx.author.send(
+        content=games, 
+        delete_after=60
+    )
+    
 
 bot.remove_command("help")
 @bot.command(aliases=["info"])
@@ -93,8 +112,8 @@ async def help(ctx):
     Just type "T!play" in chat and the bot will let you know that the game is starting. The game ends automatically when you lose. (i.e. when the top of the board is blocked)
     
     **:link: Links:**
-    Invite me to another server here: {PASTE YOUR BOT'S INVITE LINK HERE}
-    Star me on GitHub! https://github.com/ForceOverArea/Tetrabot
+    Invite me to another server here: https://discord.com/oauth2/authorize?client_id=735948673212481736&scope=bot&permissions=1073753104
+    Report a bug on GitHub here: https://github.com/ForceOverArea/Tetrabot/issues
     Vote for me on the Discord bot store! https://top.gg/bot/735948673212481736
     """
 
@@ -108,13 +127,13 @@ async def help(ctx):
             text="Created by ForceOverArea",
             icon_url="https://avatars1.githubusercontent.com/u/70045551?s=460&u=0f8845c56ebdfb1f24e1c43d8f4db7259b8824e5&v=4"
         )
-    )  
+    )   
 
 
 @bot.command()
 async def play(ctx):
     """Starts a game of Tetris in text chat."""
-    assert(ctx.guild)
+    assert(ctx.guild) #prevents games from starting in DMs
     global games
     if str(ctx.author.id) in games:
         print("Removing leftover game data...")
