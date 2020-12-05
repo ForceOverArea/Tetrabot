@@ -58,16 +58,24 @@ async def clock():
                     )
             
             except:
-                await thisGame.instance.edit(
-                    embed=discord.Embed(
-                        description=":space_invader: **Game Over** :space_invader:\nThanks for playing!",
-                        color=discord.Colour.purple()
-                    ).set_footer(text=f" Final score: {thisGame.score} points")
-                )
-                print("Deleting Game data... ",games)
-                games.pop(thisGameID)
-                print("Done ",games)
-                return
+                try:
+                    await thisGame.instance.edit(
+                        embed=discord.Embed(
+                            description=":space_invader: **Game Over** :space_invader:\nThanks for playing!",
+                            color=discord.Colour.purple()
+                        ).set_footer(text=f" Final score: {thisGame.score} points")
+                    )
+                    print("Deleting Game data... ",games)
+                    games.pop(thisGameID)
+                    print("Done ",games)
+                    return
+                
+                except:
+                    # This is a sh*tty fix. Games will be frozen roughly once ev. 24 hrs as a result.
+                    # as of right now, I'm going to assume that the bot lock-up bug is a cache issue and 
+                    # that clearing all games from memory fixes it.
+                    games.clear()
+                    
         else: # executes when no game exists in RAM
             pass
 
