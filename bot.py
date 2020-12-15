@@ -1,4 +1,4 @@
-import asyncio, discord, random
+import asyncio, dbl, discord, random
 from tetris import *
 from discord.ext import commands, tasks
 
@@ -229,7 +229,9 @@ async def on_reaction_add(reaction, user):
             color=discord.Colour.purple()
         ).set_footer(text=f"Score: {thisGame.score}")
     )
-    
+
+#start the top.gg cog (commented out here because token posting tokens online is a bad idea)
+#bot.load_extension("TopGG")
     
 #run the bot script
 with open("token.txt", "r") as file:
