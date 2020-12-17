@@ -79,15 +79,6 @@ async def clock():
         else: # executes when no game exists in RAM
             pass
 
-        
-@bot.command()
-@commands.check(commands.is_owner())
-async def _server_count(ctx):
-    await ctx.message.delete()
-    await ctx.author.send(
-        content=len(bot.guilds), 
-        delete_after=20
-    )
     
 @bot.command()
 @commands.check(commands.is_owner())
