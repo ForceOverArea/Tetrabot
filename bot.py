@@ -120,9 +120,8 @@ async def help(ctx):
     Just type "T!play" in chat and the bot will let you know that the game is starting. The game ends automatically when you lose. (i.e. when the top of the board is blocked)
     
     **:link: Links:**
-    Invite me to another server here: https://discord.com/oauth2/authorize?client_id=735948673212481736&scope=bot&permissions=1073753104
     Report a bug on GitHub here: https://github.com/ForceOverArea/Tetrabot/issues
-    Vote for me on the Discord bot store! https://top.gg/bot/735948673212481736
+    Invite (and vote for) me on the Discord Bot List! https://top.gg/bot/735948673212481736
     """
 
 
