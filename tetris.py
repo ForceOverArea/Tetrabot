@@ -58,6 +58,11 @@ def new_board(entities=default()):
 
 
 class tetramino():
+    """Represents a tetramino in space on the board coord system.
+    
+    NOTE this object can be initialized with any string, but only those listed
+         below are renderable.
+    """
     def __init__(self, shape, rotation=0, entities=default()): # defaults to plain square emoji set
         self.entities = entities
         self.shape = shape.upper()  # shape must be a string representing the "letter name" of each tetramino
@@ -70,6 +75,8 @@ class tetramino():
              - NOTE doing this "unpacks" the information about the tetramino to a 
                     more visual-fiendly format, but is much harder to manipulate 
                     than the tetramino obj itself.
+
+                
         """
         if self.shape == "T":
             # define the entities used here, then put them in a grid below
@@ -359,6 +366,8 @@ class game():
         random.shuffle(self.grab_bag)
         self.score = 0;
         self.piece = tetramino(self.grab_bag.pop())
+        self.hold_piece = tetramino("") # start with a blank tetramino here to simplify hold method definition code
+        self.alreadyHeld = False # user has not used their hold by default
         self.x = x
         self.y = y
 
@@ -389,7 +398,7 @@ class game():
         """Changes the piece's angle by -90deg."""
         rotation_test = copy.copy(self.piece)
         rotation_test.rotate(True)
-        self.board.display(rotation_test, self.x, self.y)
+        self.board.display(rotation_test, self.x, self.y) # this will crash if the move is illegal and prevent rotation from being altered
         self.piece.rotate(True)
             
 
@@ -400,6 +409,29 @@ class game():
         self.board.display(rotation_test, self.x, self.y)
         self.piece.rotate(False)
 
+    def tspin_cw(self):
+        """Does a t-spin if possible on a cw rotation."""
+        tscw_test = copy.copy(self.piece)
+        tscw_test.rotate(True)
+        self.board.display(tscw_test, self.x-1, self.y-2)
+
+        # if the above doesn't crash do the following
+        self.piece.rotate(True)
+        self.x += -1
+        self.y += 2
+
+
+    def tspin_ccw(self):
+        """Does a t-spin if possible on a ccw rotation."""
+        tscw_test = copy.copy(self.piece)
+        tscw_test.rotate(False)
+        self.board.display(tscw_test, self.x+1, self.y-2)
+
+        # if the above doesn't crash do the following
+        self.piece.rotate(False)
+        self.x += 1
+        self.y += 2
+
     def harddrop(self):
         """Instantly drops a piece as far down as possible."""
         for hdy in range((self.y),18):
@@ -408,6 +440,38 @@ class game():
             except:
                 self.board.display(self.piece, self.x, hdy-1) #crashes if the resulting harddrop is impossible/illegal
                 self.y = hdy-1 #sets the cursor position
+
+
+    def hold(self):
+        """Save a piece for later use."""
+        
+        if self.hold_piece.shape == "":
+            print("Attempting primary hold")
+            # swap the piece into the hold slot and grab a new one, then reset cursor
+            
+            self.hold_piece = self.piece
+            self.grab()
+
+            self.x = 3 
+            self.y = 0
+
+            self.alreadyHeld = True 
+            # prevent player from spamming hold to stall. 
+            # this status is reverted to False after a
+            # successful merge() call. see merge() definition for more info 
+
+        else:
+            print("Attempting secondary hold")
+            # swap the pieces in the hold and piece slots, then reset cursor
+            
+            stor = self.hold_piece
+            self.hold_piece = self.piece
+            self.piece = stor
+
+            self.x = 3
+            self.y = 0
+
+            self.alreadyHeld = True
 
 
     def clear(self):
@@ -430,6 +494,10 @@ class game():
     def merge(self):
         """Merges the current piece to the board at the current cursor position."""
         self.board.merge(self.piece, self.x, self.y)
+        self.alreadyHeld = False
+
+        # allow the player to hold again now
+        # that they have used their current piece
 
 
     def display(self):

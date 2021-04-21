@@ -3,7 +3,7 @@ from tetris import *
 from discord.ext import commands, tasks
 
 # set prefix
-bot = commands.AutoShardedBot(command_prefix= "T!")
+bot = commands.AutoShardedBot(command_prefix= "TT!")
 games = {
 #   str(user.id):game_obj
 }
@@ -34,7 +34,7 @@ async def clock():
                 embed=discord.Embed(
                     description=thisGame.display(),
                     color=discord.Colour.purple()
-                ).set_footer(text=f"Score: {thisGame.score}")
+                    ).set_footer(text=f"Score: {thisGame.score}  Hold: {thisGame.hold_piece.shape}")
             )
         
         except: 
@@ -54,7 +54,7 @@ async def clock():
                     embed=discord.Embed(
                         description=thisGame.display(), #this line is in charge of updating the current frame displayed in chat
                         color=discord.Colour.purple()
-                        ).set_footer(text=f"Score: {thisGame.score}")
+                        ).set_footer(text=f"Score: {thisGame.score}  Hold: {thisGame.hold_piece.shape}")
                     )
             
             except:
@@ -102,11 +102,18 @@ async def help(ctx):
     
     **:space_invader: Scoring:**
     Fill lines from left to right to clear them!
+
         1 line clear ---------- 10 points
         2 line clear ---------- 100 points
         3 line clear ---------- 1000 points
         4 line clear (Tetris) - 10000 points
-    
+
+        T-spin single --------- 100 points
+        T spin double --------- 1000 points
+        T-spin triple --------- 100000 points
+
+        Perfect clear --------- 1000000 points
+
     **:arrow_forward: To Start a Game:**
     Just type "T!play" in chat and the bot will let you know that the game is starting. The game ends automatically when you lose. (i.e. when the top of the board is blocked)
     
@@ -166,11 +173,11 @@ async def play(ctx):
         embed=discord.Embed(
             description=thisGame.display(),
             color=discord.Colour.purple()
-        ).set_footer(text=f"Score: {thisGame.score}")
+        ).set_footer(text=f"Score: {thisGame.score}  Hold: {thisGame.hold_piece.shape}")
     )
     # add appropriate reactions as buttons 
-    # in order, rotccw, left, right, rotc, hard-drop(wip), hold(wip) 
-    for emoji in ["\U0001F91B","\U0001F448","\U0001F449","\U0001F91C","\U0001F447"]:
+    # in order: hold, rotccw, left, right, rotc, hard-drop
+    for emoji in ["\U0001F44A", "\U0001F91B","\U0001F448","\U0001F449","\U0001F91C","\U0001F447"]:
         await thisGame.instance.add_reaction(emoji)
         
     
@@ -188,18 +195,38 @@ async def on_reaction_add(reaction, user):
     except:
         return # when the user's id doesn't exist in the global dict
     thisGame = games[str(user.id)]
+
     if reaction.emoji == "\U0001F91B": # ccw rotation
         await reaction.remove(user)
-        thisGame.ccw() #NOTE thrown error appears to be automatically handled "\_('u' )_/"
+
+        if thisGame.piece.shape == "T": # try to do a t-spin if the piece is a T
+            try:
+                print("Attempting T-spin (CCW)")
+                thisGame.tspin_ccw()
+                return
+            except:
+                pass
+        thisGame.ccw() #NOTE thrown errors appear to be automatically handled "\_('u' )_/"
+
     if reaction.emoji == "\U0001F91C": # cw rotation
         await reaction.remove(user)
-        thisGame.cw() #NOTE thrown error appears to be automatically handled "\_('u' )_/"
+
+        if thisGame.piece.shape == "T": # try to do a t-spin if the piece is a T
+            try:
+                print("Attempting T-spin (CW)")
+                thisGame.tspin_cw()
+                return
+            except:
+                pass
+        thisGame.cw() #NOTE thrown errors appear to be automatically handled "\_('u' )_/"
+
     if reaction.emoji == "\U0001F448": # translate left
         try:
             thisGame.left()
         except:
             pass
         await reaction.remove(user)
+
     if reaction.emoji == "\U0001F449": # translate right
         try:
             thisGame.right()
@@ -207,17 +234,22 @@ async def on_reaction_add(reaction, user):
             pass
         await reaction.remove(user)
     
-    if reaction.emoji == "\U0001F447":
+    if reaction.emoji == "\U0001F447": # harddrop
         await reaction.remove(user)
         thisGame.harddrop()
-        
+    
+    if reaction.emoji == "\U0001F44A": # hold
+        await reaction.remove(user)
+        if not thisGame.alreadyHeld: # prevent the user from spamming hold to stall
+            thisGame.hold()
+
     else:
         return
     await games[str(user.id)].instance.edit(
         embed = discord.Embed(
             description=thisGame.display(),
             color=discord.Colour.purple()
-        ).set_footer(text=f"Score: {thisGame.score}")
+        ).set_footer(text=f"Score: {thisGame.score}  Hold: {thisGame.hold_piece.shape}")
     )
 
 #start the top.gg cog (commented out here because token posting tokens online is a bad idea)
