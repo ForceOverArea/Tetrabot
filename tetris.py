@@ -31,7 +31,7 @@ def new_board(entities=default()):
     #tile = entities["empty"]
     
     top_margin = 2*[11*[""]]
-    body = 16*[[""] + 8*[entities["empty"]] + [""] + [""]]
+    #body = 16*[[""] + 8*[entities["empty"]] + [""] + [""]]
     #real_body = copy.deepcopy(body) #BUG: spotted a potential bug where all rows point to the same address
     real_body = [
         [""] + 8*[copy.deepcopy(entities["empty"])] + [""] + [""],
@@ -58,6 +58,11 @@ def new_board(entities=default()):
 
 
 class tetramino():
+    """Represents a tetramino in space on the board coord system.
+    
+    NOTE this object can be initialized with any string, but only those listed
+         below are renderable.
+    """
     def __init__(self, shape, rotation=0, entities=default()): # defaults to plain square emoji set
         self.entities = entities
         self.shape = shape.upper()  # shape must be a string representing the "letter name" of each tetramino
@@ -70,6 +75,8 @@ class tetramino():
              - NOTE doing this "unpacks" the information about the tetramino to a 
                     more visual-fiendly format, but is much harder to manipulate 
                     than the tetramino obj itself.
+
+                
         """
         if self.shape == "T":
             # define the entities used here, then put them in a grid below
@@ -305,7 +312,7 @@ class board():
     def clear_lines(self):
         """Clears all lines that have no empty entities in them."""
         count = 0
-        for j in range(2,18): #not sure what index the bottom of the board is at |:[
+        for j in range(2,18): 
             if self.entities["empty"] not in self.state[j]:
                 self.state.pop(j)
                 count+=1
@@ -345,6 +352,7 @@ class board():
         
     
     def dispraw(self):
+        """Displays sprites overlayed onto board without automatic error handling for debugging purposes."""
         return "\n".join(["".join(row) for row in self.state])
 
 
@@ -357,8 +365,11 @@ class game():
         self.board = board
         self.grab_bag = ["T","I","O","L","J","S","Z"]
         random.shuffle(self.grab_bag)
-        self.score = 0;
+        self.score = 0
+        self.score_bonus = 1
         self.piece = tetramino(self.grab_bag.pop())
+        self.hold_piece = tetramino("") # start with a blank tetramino here to simplify hold method definition code
+        self.alreadyHeld = False # user has not used their hold by default
         self.x = x
         self.y = y
 
@@ -389,7 +400,7 @@ class game():
         """Changes the piece's angle by -90deg."""
         rotation_test = copy.copy(self.piece)
         rotation_test.rotate(True)
-        self.board.display(rotation_test, self.x, self.y)
+        self.board.display(rotation_test, self.x, self.y) # this will crash if the move is illegal and prevent rotation from being altered
         self.piece.rotate(True)
             
 
@@ -400,21 +411,105 @@ class game():
         self.board.display(rotation_test, self.x, self.y)
         self.piece.rotate(False)
 
+
+    def tspin_cw(self):
+        """Does a t-spin if possible and eligible on a cw rotation."""
+        try:
+            self.board.display(self.piece, self.x, self.y-1) 
+            # if ELIGIBLE, T-piece should NOT be able to move up 1 pixel since it's under a ledge
+            # if this is the case, the above will crash and the exception will attempt the t-spin
+        except:
+            ts_test = copy.copy(self.piece)
+            ts_test.rotate(True)
+            self.board.display(ts_test, self.x-1, self.y+2) # test if the display method will allow this, if so, the below code will run as well without issue
+
+            # if the above doesn't crash do the following
+            self.piece.rotate(True)
+            self.x += -1
+            self.y += 2
+            self.score_bonus = 100 # temporarily set the bonus multiplier to 100 
+            return
+
+        raise Exception("ineligible for t-spin")
+
+
+    def tspin_ccw(self):
+        """Does a t-spin if possible on a ccw rotation."""
+        try:
+            self.board.display(self.piece, self.x, self.y-1) 
+            # if ELIGIBLE, T-piece should NOT be able to move up 1 pixel since it's under a ledge
+            # if this is the case, the above will crash and the exception will attempt the t-spin
+        except:
+            ts_test = copy.copy(self.piece)
+            ts_test.rotate(False)
+            self.board.display(ts_test, self.x+1, self.y+2)
+
+            # if the above doesn't crash do the following
+            self.piece.rotate(False)
+            self.x += 1
+            self.y += 2
+            self.score_bonus = 100
+            return
+        
+        raise Exception("ineligible for t-spin")
+
+
     def harddrop(self):
         """Instantly drops a piece as far down as possible."""
         for hdy in range((self.y),18):
             try:
+                print("trying: ", hdy)
                 self.board.display(self.piece, self.x, hdy)
             except:
+                print("excepting: ", hdy)
                 self.board.display(self.piece, self.x, hdy-1) #crashes if the resulting harddrop is impossible/illegal
                 self.y = hdy-1 #sets the cursor position
+
+
+    def hold(self):
+        """Save a piece for later use."""
+        
+        if self.hold_piece.shape == "":
+            print("Attempting primary hold")
+            # swap the piece into the hold slot and grab a new one, then reset cursor
+            
+            self.hold_piece = self.piece
+            self.grab()
+
+            self.x = 3
+            self.y = 0
+
+            self.alreadyHeld = True 
+            # prevent player from spamming hold to stall. 
+            # this status is reverted to False after a
+            # successful merge() call. see merge() definition for more info 
+
+
+        else:
+            print("Attempting secondary hold")
+            # swap the pieces in the hold and piece slots, then reset cursor
+            
+            stor = self.hold_piece
+            self.hold_piece = self.piece
+            self.piece = stor
+
+            self.x = 3
+            self.y = 0
+
+            self.alreadyHeld = True
 
 
     def clear(self):
         """Clears all complete lines on the board."""
         score_factor = self.board.clear_lines()
         if score_factor != 0:
-            self.score += 10**score_factor
+
+            # if the board is perfectly cleared, multiply bonus factor by 100000.
+            if self.board.state == new_board():
+                self.score_bonus = self.score_bonus*100000 # NOTE that this only works because t-spin bonus is ALWAYS applied prior to line clearing.
+
+            self.score += self.score_bonus*10**score_factor 
+            self.score_bonus = 1
 
 
     def grab(self):
@@ -430,6 +525,10 @@ class game():
     def merge(self):
         """Merges the current piece to the board at the current cursor position."""
         self.board.merge(self.piece, self.x, self.y)
+        self.alreadyHeld = False
+
+        # allow the player to hold again now
+        # that they have used their current piece
 
 
     def display(self):
