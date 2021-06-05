@@ -3,7 +3,7 @@ from tetris import *
 from discord.ext import commands, tasks
 
 # set prefix
-bot = commands.AutoShardedBot(command_prefix= "TT!")
+bot = commands.AutoShardedBot(command_prefix= "T!")
 games = {
 #   str(user.id):game_obj
 }
