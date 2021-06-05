@@ -95,10 +95,11 @@ bot.remove_command("help")
 async def help(ctx):
     helpMessage = """
     **:video_game: How to Play:**
-    The game is controlled via 5 different reaction 'buttons':
+    The game is controlled via 6 different reaction 'buttons':
     :point_left:/:point_right: - Move the piece left/right
     :left_fist:/:right_fist: - Rotate the piece counter-clockwise/clockwise
     :point_down: - Drop the piece to the bottom of the board instantly
+    :punch: - Hold the current piece and save it for later
     
     **:space_invader: Scoring:**
     Fill lines from left to right to clear them!
@@ -109,7 +110,7 @@ async def help(ctx):
         4 line clear (Tetris) - 10000 points
 
         T-spin single --------- 1000 points
-        T spin double --------- 10000 points
+        T-spin double --------- 10000 points
         T-spin triple --------- 100000 points
 
         Perfect clear --------- 10000000 points
@@ -129,7 +130,7 @@ async def help(ctx):
             description=helpMessage,
             color=discord.Colour.purple()
         ).set_footer(
-            text="Created by ForceOverArea",
+            text="Created by ForceOverArea#5766",
             icon_url="https://avatars1.githubusercontent.com/u/70045551?s=460&u=0f8845c56ebdfb1f24e1c43d8f4db7259b8824e5&v=4"
         )
     )   
