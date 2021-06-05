@@ -79,7 +79,7 @@ async def clock():
         else: # executes when no game exists in RAM
             pass
 
-    
+
 @bot.command()
 @commands.check(commands.is_owner())
 async def _view_games(ctx):
@@ -88,7 +88,7 @@ async def _view_games(ctx):
         content=games, 
         delete_after=60
     )
-    
+
 
 bot.remove_command("help")
 @bot.command(aliases=["info"])
@@ -108,11 +108,11 @@ async def help(ctx):
         3 line clear ---------- 1000 points
         4 line clear (Tetris) - 10000 points
 
-        T-spin single --------- 100 points
-        T spin double --------- 1000 points
+        T-spin single --------- 1000 points
+        T spin double --------- 10000 points
         T-spin triple --------- 100000 points
 
-        Perfect clear --------- 1000000 points
+        Perfect clear --------- 10000000 points
 
     **:arrow_forward: To Start a Game:**
     Just type "T!play" in chat and the bot will let you know that the game is starting. The game ends automatically when you lose. (i.e. when the top of the board is blocked)
